@@ -16,6 +16,10 @@ export default class WebGLView {
       "http://localhost:3000/images/sample-03.png",
       "http://localhost:3000/images/sample-04.png",
       "http://localhost:3000/images/sample-05.png",
+      "http://localhost:3000/images/sample-06.png",
+      "http://localhost:3000/images/sample-07.png",
+      "http://localhost:3000/images/sample-09.png",
+      "http://localhost:3000/images/sample-10.jpg",
     ];
 
     //console.log(this.samples);

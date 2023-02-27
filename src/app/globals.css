@@ -87,7 +87,7 @@ body {
 
 body {
   color: white;
-  background: black;
+  background: transparent;
   position: relative;
 }
 
@@ -96,11 +96,13 @@ a {
   text-decoration: none;
 }
 
-.karan {
+.interactive-wall {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   top: 0;
+  font-size: 2rem;
+  font-weight: 900;
 }
 
 @media (prefers-color-scheme: dark) {
