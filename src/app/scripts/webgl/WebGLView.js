@@ -36,10 +36,10 @@ export default class WebGLView {
     this.camera = new THREE.PerspectiveCamera(
       50,
       window.innerWidth / window.innerHeight,
-      1,
+      2,
       10000
     );
-    this.camera.position.z = 300;
+    this.camera.position.z = 500;
 
     // renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
