@@ -1,22 +1,29 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import * as bodySegmentation from "@tensorflow-models/body-segmentation";
 import * as tf from "@tensorflow/tfjs-core";
 // Register WebGL backend.
 import "@tensorflow/tfjs-backend-webgl";
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 export default function Home() {
-  const imageToRemove = useRef(null);
+  const initialImage = useRef(null);
   const canvasToLoad = useRef(null);
+  const removedBgImg = useRef(null);
+
+  const [imageUrl, setImageUrl] = useState("/images/sample-04.jpg");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const image = imageToRemove.current;
+    const image = initialImage.current;
     const canvas = canvasToLoad.current;
-    removeBackground(image, canvas);
-  });
+    const rmBgImg = removedBgImg.current;
+    removeBackground(image, canvas, rmBgImg);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  async function removeBackground(image, canvas) {
+  async function removeBackground(img, canvas) {
     const model = bodySegmentation.SupportedModels.MediaPipeSelfieSegmentation;
     const segmenterConfig = {
       runtime: "tfjs",
@@ -26,8 +33,10 @@ export default function Home() {
       segmenterConfig
     );
 
-    const segmentation = await segmenter.segmentPeople(image);
-    console.log(image);
+    const segmentation = await segmenter.segmentPeople(img, {
+      multiSegmentation: false,
+      segmentBodyParts: true,
+    });
 
     // Convert the segmentation into a mask to darken the background.
     const foregroundColor = { r: 0, g: 0, b: 0, a: 0 };
@@ -38,33 +47,47 @@ export default function Home() {
       backgroundColor
     );
 
-    const opacity = 0.8;
+    const opacity = 1;
     const maskBlurAmount = 3;
     const flipHorizontal = false;
-    image;
+
     // Draw the mask onto the image on a canvas.  With opacity set to 0.7 and
     // maskBlurAmount set to 3, this will darken the background and blur the
     // darkened background's edge.
     await bodySegmentation.drawMask(
       canvas,
-      image,
+      img,
       backgroundDarkeningMask,
       opacity,
       maskBlurAmount,
       flipHorizontal
     );
+    setImageUrl(canvas.toDataURL());
+    setLoading(false);
   }
+
   return (
     <Fragment>
-      <Image
-        ref={imageToRemove}
-        src={"/images/sample-01.jpg"}
+      <img
+        ref={initialImage}
+        src={"/images/sample-10.avif"}
         alt="lady"
-        height={400}
-        width={500}
+        height={"auto"}
+        width={"auto"}
       />
-
-      <canvas ref={canvasToLoad}></canvas>
+      <canvas style={{ display: "none" }} ref={canvasToLoad}></canvas>
+      {loading ? (
+        <h1>Loading, please wait ...</h1>
+      ) : (
+        <Image
+          style={{ display: "block" }}
+          src={imageUrl}
+          ref={removedBgImg}
+          alt="lady"
+          height={400}
+          width={500}
+        />
+      )}
     </Fragment>
   );
 }
