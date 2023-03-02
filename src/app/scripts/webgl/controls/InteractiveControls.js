@@ -86,7 +86,12 @@ export default class InteractiveControls extends EventEmitter {
         //     this.onPose(keypoint);
         //   });
         // }
-        if (this.poses[0].keypoints[0]) {
+        if (
+          this.poses &&
+          this.poses.length > 0 &&
+          this.poses[0].keypoints &&
+          this.poses[0].keypoints.length > 0
+        ) {
           console.log(this.poses[0].keypoints[0]);
           this.onPose(this.poses[0].keypoints[0]);
         }
