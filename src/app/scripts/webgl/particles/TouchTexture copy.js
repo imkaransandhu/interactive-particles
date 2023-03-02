@@ -76,16 +76,16 @@ export default class TouchTexture {
     };
 
     let intensity = 1;
-    if (point.age < this.maxAge * 0.3) {
-      intensity = easeInQuad(point.age / (this.maxAge * 0.3), 0, 1, 1);
-    } else {
-      intensity = easeInQuad(
-        1 - (point.age - this.maxAge * 0.3) / (this.maxAge * 0.7),
-        0,
-        1,
-        1
-      );
-    }
+    // if (point.age < this.maxAge * 0.3) {
+    //   intensity = easeInQuad(point.age / (this.maxAge * 0.3), 0, 1, 1);
+    // } else {
+    //   intensity = easeInQuad(
+    //     1 - (point.age - this.maxAge * 0.3) / (this.maxAge * 0.7),
+    //     0,
+    //     1,
+    //     1
+    //   );
+    // }
 
     intensity *= point.force;
 

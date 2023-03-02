@@ -1,12 +1,14 @@
+import React, { Component } from "react";
 import WebGLView from "./webgl/WebGLView";
 import GUIView from "./gui/GUIView";
 
-export default class App {
-  constructor(poseArray) {
-    this.poseArray = poseArray;
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.handlerAnimate = this.animate.bind(this);
   }
 
-  init() {
+  componentDidMount() {
     this.initWebGL();
     this.initGUI();
     this.addListeners();
@@ -26,8 +28,6 @@ export default class App {
   }
 
   addListeners() {
-    this.handlerAnimate = this.animate.bind(this);
-
     window.addEventListener("resize", this.resize.bind(this));
     window.addEventListener("keyup", this.keyup.bind(this));
 
@@ -42,10 +42,6 @@ export default class App {
     this.raf = requestAnimationFrame(this.handlerAnimate);
   }
 
-  // ---------------------------------------------------------------------------------------------
-  // PUBLIC
-  // ---------------------------------------------------------------------------------------------
-
   update() {
     if (this.gui.stats) this.gui.stats.begin();
     if (this.webgl) this.webgl.update();
@@ -57,17 +53,13 @@ export default class App {
     if (this.gui.stats) this.gui.stats.end();
   }
 
-  // ---------------------------------------------------------------------------------------------
-  // EVENT HANDLERS
-  // ---------------------------------------------------------------------------------------------
-
   resize() {
     if (this.webgl) this.webgl.resize();
   }
 
   keyup(e) {
     // g
-    if (e.keyCode == 71) {
+    if (e.keyCode === 71) {
       if (this.gui) this.gui.toggle();
     }
   }
@@ -75,4 +67,14 @@ export default class App {
   click(e) {
     this.webgl.next();
   }
+
+  render() {
+    return (
+      <div className="container">
+        {/* WebGLView and GUIView components will be inserted here */}
+      </div>
+    );
+  }
 }
+
+export default App;

@@ -1,18 +1,16 @@
+import React, { Component } from "react";
 import * as THREE from "three";
 import { TweenLite } from "gsap/TweenMax";
-
 import InteractiveControls from "./controls/InteractiveControls";
 import Particles from "./particles/Particles";
-
 const glslify = require("glslify");
 
-export default class WebGLView {
-  constructor(app) {
-    this.app = app;
-    // console.log(app);
-    this.samples = ["images/sample-01.jpg", "images/sample-01.jpg"];
+export default class WebGLView extends Component {
+  constructor(props) {
+    super(props);
 
-    //console.log(this.samples);
+    this.samples = ["images/sample-01.jpg", "images/sample-01.jpg"];
+    this.currSample = null;
 
     this.initThree();
     this.initParticles();
@@ -45,8 +43,7 @@ export default class WebGLView {
   initControls() {
     this.interactive = new InteractiveControls(
       this.camera,
-      this.renderer.domElement,
-      this.app.poseArray
+      this.renderer.domElement
     );
   }
 
@@ -106,5 +103,9 @@ export default class WebGLView {
 
     if (this.interactive) this.interactive.resize();
     if (this.particles) this.particles.resize();
+  }
+
+  render() {
+    return <div ref={(ref) => (this.mount = ref)} />;
   }
 }
