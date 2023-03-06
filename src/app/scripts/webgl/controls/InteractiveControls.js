@@ -76,10 +76,8 @@ export default class InteractiveControls extends EventEmitter {
         this.poses[0].keypoints &&
         this.poses[0].keypoints.length > 0
       ) {
-        this.poses[0].keypoints.forEach((keypoint) => {
-          this.onPose(keypoint);
-          console.log(keypoint);
-        });
+        this.onPose(this.poses[0].keypoints[0]);
+        console.log(this.poses[0]);
       }
     };
     this.raf = requestAnimationFrame(animate);
