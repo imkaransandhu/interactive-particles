@@ -68,16 +68,21 @@ export default class InteractiveControls extends EventEmitter {
         facingMode: "user",
         // Only setting the video to a specified size for large screen, on
         // mobile devices accept the default size.
-        width: screen.width,
-        height: screen.height,
+        width: "100vw",
+        height: "100vh",
         frameRate: {
           ideal: 60,
         },
       },
     };
-
+    const estimationConfig = {
+      flipHorizontal: false,
+    };
     if (navigator.mediaDevices || navigator.mediaDevices.getUserMedia) {
-      this.stream = await navigator.mediaDevices.getUserMedia(this.videoConfig);
+      this.stream = await navigator.mediaDevices.getUserMedia(
+        this.videoConfig,
+        estimationConfig
+      );
       this.video.srcObject = this.stream;
       this.interval = setInterval(async () => {
         this.poses = await this.detector.estimatePoses(this.video);
