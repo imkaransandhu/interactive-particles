@@ -37,7 +37,9 @@ export default class InteractiveControls extends EventEmitter {
 
     /////////////////////////////////////////////////////////////////////
     this.detectorConfig = {
-      modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+      modelType: poseDetection.movenet.modelType.MULTIPOSE_LIGHTNING,
+      enableTracking: true,
+      trackerType: poseDetection.TrackerType.BoundingBox,
     };
     this.detector = null;
     this.interval = null;
@@ -58,29 +60,45 @@ export default class InteractiveControls extends EventEmitter {
       this.detectorConfig
     );
 
-    this.video = document.getElementById("webcam");
-
-    const estimationConfig = { flipHorizontal: true };
-    //const timestamp = performance.now();
-    const animate = async () => {
-      this.raf = requestAnimationFrame(animate);
-
-      this.poses = await this.detector.estimatePoses(
-        this.video,
-        estimationConfig
-      );
-      console.log("kkk");
-      if (
-        this.poses &&
-        this.poses.length > 0 &&
-        this.poses[0].keypoints &&
-        this.poses[0].keypoints.length > 0
-      ) {
-        this.onPose(this.poses[0].keypoints[0]);
-        console.log(this.poses[0]);
-      }
+    this.video = document.createElement("video");
+    this.video.autoplay = true;
+    this.videoConfig = {
+      audio: false,
+      video: {
+        facingMode: "user",
+        // Only setting the video to a specified size for large screen, on
+        // mobile devices accept the default size.
+        width: screen.width,
+        height: screen.height,
+        frameRate: {
+          ideal: 60,
+        },
+      },
     };
-    this.raf = requestAnimationFrame(animate);
+
+    if (navigator.mediaDevices || navigator.mediaDevices.getUserMedia) {
+      this.stream = await navigator.mediaDevices.getUserMedia(this.videoConfig);
+      this.video.srcObject = this.stream;
+      this.interval = setInterval(async () => {
+        this.poses = await this.detector.estimatePoses(this.video);
+        // if (this.poses[0]) {
+        //   this.poses[0].keypoints.forEach((keypoint) => {
+        //     this.onPose(keypoint);
+        //   });
+        // }
+        if (
+          this.poses &&
+          this.poses.length > 0 &&
+          this.poses[0].keypoints &&
+          this.poses[0].keypoints.length > 0
+        ) {
+          console.log(this.poses[0].keypoints[0]);
+          this.onPose(this.poses[0].keypoints[0]);
+        }
+      }, 100);
+    } else {
+      console.log("wait for camera to load");
+    }
   }
 
   /////////////////////////////////////////////////////////////
@@ -153,14 +171,14 @@ export default class InteractiveControls extends EventEmitter {
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
     /*
-      // is dragging
-      if (this.selected && this.isDown) {
-        if (this.raycaster.ray.intersectPlane(this.plane, this.intersection)) {
-          this.emit('interactive-drag', { object: this.selected, position: this.intersection.sub(this.offset) });
-        }
-        return;
-      }
-      */
+		// is dragging
+		if (this.selected && this.isDown) {
+			if (this.raycaster.ray.intersectPlane(this.plane, this.intersection)) {
+				this.emit('interactive-drag', { object: this.selected, position: this.intersection.sub(this.offset) });
+			}
+			return;
+		}
+		*/
 
     const intersects = this.raycaster.intersectObjects(this.objects);
 
@@ -234,14 +252,14 @@ export default class InteractiveControls extends EventEmitter {
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
     /*
-      // is dragging
-      if (this.selected && this.isDown) {
-        if (this.raycaster.ray.intersectPlane(this.plane, this.intersection)) {
-          this.emit('interactive-drag', { object: this.selected, position: this.intersection.sub(this.offset) });
-        }
-        return;
-      }
-      */
+		// is dragging
+		if (this.selected && this.isDown) {
+			if (this.raycaster.ray.intersectPlane(this.plane, this.intersection)) {
+				this.emit('interactive-drag', { object: this.selected, position: this.intersection.sub(this.offset) });
+			}
+			return;
+		}
+		*/
 
     const intersects = this.raycaster.intersectObjects(this.objects);
 
