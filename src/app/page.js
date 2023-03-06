@@ -14,10 +14,7 @@ export default function Home() {
     <Fragment>
       <div className="container"></div>
       <h1 className="interactive-wall">Interactive Wall</h1>
-      <Webcam
-        id="webcam"
-        style={{ display: "none", height: "300px", width: "300px" }}
-      />
+      <Webcam style={{ height: "100%", width: "100%" }} id={"webcam"} />
     </Fragment>
   );
 }

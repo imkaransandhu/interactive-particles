@@ -10,7 +10,7 @@ export default class WebGLView {
   constructor(app) {
     this.app = app;
     // console.log(app);
-    this.samples = ["images/sample-01.jpg", "images/sample-01.jpg"];
+    this.samples = ["images/sample-11.jpg", "images/sample-01.jpg"];
 
     //console.log(this.samples);
 

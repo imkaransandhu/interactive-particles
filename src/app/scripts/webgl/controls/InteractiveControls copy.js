@@ -37,7 +37,9 @@ export default class InteractiveControls extends EventEmitter {
 
     /////////////////////////////////////////////////////////////////////
     this.detectorConfig = {
-      modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+      modelType: poseDetection.movenet.modelType.MULTIPOSE_LIGHTNING,
+      enableTracking: true,
+      trackerType: poseDetection.TrackerType.BoundingBox,
     };
     this.detector = null;
     this.interval = null;
@@ -58,24 +60,48 @@ export default class InteractiveControls extends EventEmitter {
       this.detectorConfig
     );
 
-    this.video = document.getElementById("webcam");
+    this.video = document.createElement("video");
+    this.video.autoplay = true;
+    this.videoConfig = {
+      audio: false,
+      video: {
+        facingMode: "user",
+        // Only setting the video to a specified size for large screen, on
+        // mobile devices accept the default size.
+        width: screen.width,
+        height: screen.height,
+        frameRate: {
+          ideal: 60,
+        },
+      },
+    };
 
-    const estimationConfig = { flipHorizontal: true };
-    //const timestamp = performance.now();
+    // if (navigator.mediaDevices || navigator.mediaDevices.getUserMedia) {
+    //   this.stream = await navigator.mediaDevices.getUserMedia(this.videoConfig);
+    //   this.video.srcObject = this.stream;
+    //   this.interval = setInterval(async () => {
+    //     this.poses = await this.detector.estimatePoses(this.video);
+    //     if (this.poses.length > 0 && this.poses) {
+    //       this.poses[0].keypoints.forEach((keypoint) => {
+    //         this.onPose(keypoint);
+    //         console.log(keypoint);
+    //       });
+    //     }
+    //     // if (
+    //     //   this.poses &&
+    //     //   this.poses.length > 0 &&
+    //     //   this.poses[0].keypoints &&
+    //     //   this.poses[0].keypoints.length > 0
+    //     // ) {
+    //     //   console.log(this.poses[0].keypoints[10]);
+    //     //   this.onPose(this.poses[0].keypoints[10]);
+    //     // }
+    // }, 100);
     const animate = async () => {
       this.raf = requestAnimationFrame(animate);
-
-      this.poses = await this.detector.estimatePoses(
-        this.video,
-        estimationConfig
-      );
+      this.poses = await this.detector.estimatePoses(this.video);
       console.log("kkk");
-      if (
-        this.poses &&
-        this.poses.length > 0 &&
-        this.poses[0].keypoints &&
-        this.poses[0].keypoints.length > 0
-      ) {
+      if (this.poses.length > 0 && this.poses) {
         this.poses[0].keypoints.forEach((keypoint) => {
           this.onPose(keypoint);
           console.log(keypoint);
