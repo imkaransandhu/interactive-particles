@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import * as THREE from "three";
-import browser from "browser-detect";
 import * as poseDetection from "@tensorflow-models/pose-detection";
+import browser from "browser-detect";
 import * as tf from "@tensorflow/tfjs-core";
 // Register one of the TF.js backends.
 import "@tensorflow/tfjs-backend-webgl";
@@ -36,71 +36,38 @@ export default class InteractiveControls extends EventEmitter {
     this.enable();
 
     /////////////////////////////////////////////////////////////////////
-    this.detectorConfig = {
-      modelType: poseDetection.movenet.modelType.MULTIPOSE_LIGHTNING,
-      enableTracking: true,
-      trackerType: poseDetection.TrackerType.BoundingBox,
-    };
+  
     this.detector = null;
     this.interval = null;
     this.video = null;
     this.poses = null;
     this.stream = null;
     this.videoConfig = null;
-    // this.poseArray = [];
-    this.initialize(); // Call the initialize method in the constructor to start the interval
-    // this.runDetector();
+  
+    this.createModal(); 
+
     /////////////////////////////////////////////////////////////////////////
   }
 
   ///////////////////////////////////////////////////////////////////
-  async initialize() {
-    this.detector = await poseDetection.createDetector(
-      poseDetection.SupportedModels.MoveNet,
-      this.detectorConfig
-    );
-
-    this.video = document.createElement("video");
-    this.video.autoplay = true;
-    this.videoConfig = {
-      audio: false,
-      video: {
-        facingMode: "user",
-        // Only setting the video to a specified size for large screen, on
-        // mobile devices accept the default size.
-        width: "100vw",
-        height: "100vh",
-        frameRate: {
-          ideal: 60,
-        },
-      },
-    };
-    const estimationConfig = {
-      flipHorizontal: false,
-    };
-    if (navigator.mediaDevices || navigator.mediaDevices.getUserMedia) {
-      this.stream = await navigator.mediaDevices.getUserMedia(
-        this.videoConfig,
-        estimationConfig
-      );
-      this.video.srcObject = this.stream;
-      this.interval = setInterval(async () => {
-        this.poses = await this.detector.estimatePoses(this.video);
-        // if (this.poses[0]) {
-        //   this.poses[0].keypoints.forEach((keypoint) => {
-        //     this.onPose(keypoint);
-        //   });
-        // }
-        if (
-          this.poses &&
-          this.poses.length > 0 &&
-          this.poses[0].keypoints &&
-          this.poses[0].keypoints.length > 0
-        ) {
-          console.log(this.poses[0].keypoints[0]);
-          this.onPose(this.poses[0].keypoints[0]);
-        }
-      }, 100);
+  async createModal() {
+    const detectorConfig = {modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING}; // confiigurtion for detector
+    this.detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig); // Creating the Modal
+    this.video = document.getElementById("webcam"); // accesing the webcam element
+    if (navigator.mediaDevices || navigator.mediaDevices.getUserMedia) { // Checking if the webcam is active 
+      function detectPoses() {
+        this.detector.estimatePoses(this.video).then((poses) => {
+          if (poses && poses.length > 0) {
+        
+            poses[0].keypoints.forEach((keypoint) => {
+              console.log(keypoint.name)
+              this.onPose(keypoint);
+            });
+          }
+          requestAnimationFrame(detectPoses.bind(this));
+        });
+      }
+      requestAnimationFrame(detectPoses.bind(this));
     } else {
       console.log("wait for camera to load");
     }
@@ -169,7 +136,7 @@ export default class InteractiveControls extends EventEmitter {
   onMove(e) {
     const t = e.touches ? e.touches[0] : e;
     const touch = { x: t.clientX, y: t.clientY };
-
+    console.log(touch)
     this.mouse.x = ((touch.x + this.rect.x) / this.rect.width) * 2 - 1;
     this.mouse.y = -((touch.y + this.rect.y) / this.rect.height) * 2 + 1;
 
@@ -248,8 +215,12 @@ export default class InteractiveControls extends EventEmitter {
   }
 
   onPose(keyPoints) {
-    //const t = this.poses[0].keypoints[0];
-    const touch = { x: keyPoints.x, y: keyPoints.y };
+
+    
+    // Normalize the keyPoints from webcam height and  width to screen width and height
+    keyPoints.x = screen.width - ((keyPoints.x/640) * screen.width); // Flippinig the x-cordinates, to create the animation in same direction. 
+    const touch = { x: keyPoints.x, y: (keyPoints.y/480) * screen.height };
+
 
     this.mouse.x = ((touch.x + this.rect.x) / this.rect.width) * 2 - 1;
     this.mouse.y = -((touch.y + this.rect.y) / this.rect.height) * 2 + 1;
