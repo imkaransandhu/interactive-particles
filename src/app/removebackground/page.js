@@ -4,7 +4,7 @@ import * as bodySegmentation from "@tensorflow-models/body-segmentation";
 import * as tf from "@tensorflow/tfjs-core";
 // Register WebGL backend.
 import "@tensorflow/tfjs-backend-webgl";
-import { Fragment, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
 
@@ -16,11 +16,10 @@ export default function Home() {
   //const [imageUrl, setImageUrl] = useState("/images/sample-10.avif");
   const [loading, setLoading] = useState(true);
 
- 
-
   useEffect(() => {
     const image = videoCam.current;
     const canvas = canvasToLoad.current;
+    
     removeBackground(image, canvas);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -78,8 +77,7 @@ export default function Home() {
       )}
       
       <canvas 
-        width={640}
-        height={480} 
+        style={{ width: "100vw" , height : "100vh"}} 
        
         ref={canvasToLoad}>
 
@@ -90,18 +88,10 @@ export default function Home() {
         ref={videoCam}
         width={640}
         height={480} 
-        style={{ position : "absolute"}} 
+        style={{ position : "absolute", top: 0, left : 0, zIndex : -1}} 
       /> 
 
     </Fragment>
   );
 }
 
-
-{/* <img
-        ref={videoCam}
-        src={imageUrl}
-        alt="lady"
-        height={"auto"}
-        width={"auto"}
-      /> */}
