@@ -51,23 +51,43 @@ export default class InteractiveControls extends EventEmitter {
 
   ///////////////////////////////////////////////////////////////////
   async createModal() {
-    const detectorConfig = {modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING}; // confiigurtion for detector
-    this.detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig); // Creating the Modal
+    const detectorConfig = {
+      modelType: poseDetection.movenet.modelType.SINGLEPOSE_THUNDER,
+      enableTracking: true,
+      trackerType: poseDetection.TrackerType.BoundingBox
+    };
+    const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
     this.video = document.getElementById("webcam"); // accesing the webcam element
     if (navigator.mediaDevices || navigator.mediaDevices.getUserMedia) { // Checking if the webcam is active 
-      function detectPoses() {
-        this.detector.estimatePoses(this.video).then((poses) => {
-          if (poses && poses.length > 0) {
-        
-            poses[0].keypoints.forEach((keypoint) => {
-              console.log(keypoint.name)
-              this.onPose(keypoint);
+
+
+      // function detectPoses() {
+      //   this.detector.estimatePoses(this.video).then((poses) => {
+      //     if (poses && poses.length > 0) {
+      //       poses[0].keypoints.forEach((keypoint) => {
+      //         console.log(keypoint.name)
+      //         this.onPose(keypoint);
+      //       });
+      //     }
+      //     requestAnimationFrame(detectPoses.bind(this));
+      //   });
+      // }
+
+
+      setInterval(async () => {
+        const poses = await detector.estimatePoses(this.video);
+        if (poses && poses.length > 0) {
+
+          poses.forEach((personPose) => {
+            personPose.keypoints.forEach((keypoint) => {
+              console.log(personPose)
+              this.onPose(keypoint);  
             });
-          }
-          requestAnimationFrame(detectPoses.bind(this));
-        });
-      }
-      requestAnimationFrame(detectPoses.bind(this));
+          })
+              }
+      },100)
+
+      
     } else {
       console.log("wait for camera to load");
     }

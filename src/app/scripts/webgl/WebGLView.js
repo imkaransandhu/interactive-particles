@@ -10,7 +10,7 @@ export default class WebGLView {
   constructor(app) {
     this.app = app;
     // console.log(app);
-    this.samples = ["images/sample-11.jpg", "images/sample-01.jpg"];
+    this.samples = ["images/sample-20 - Copy.png", "images/sample-07.jpg"];
 
     //console.log(this.samples);
 
@@ -18,7 +18,7 @@ export default class WebGLView {
     this.initParticles();
     this.initControls();
 
-    const rnd = ~~(Math.random() * this.samples.length);
+    const rnd = ~~(Math.random() * this.samples.length);  
     this.goto(rnd);
   }
 
@@ -33,7 +33,7 @@ export default class WebGLView {
       2,
       10000
     );
-    this.camera.position.z = 120;
+    this.camera.position.z = 300;
 
     // renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
