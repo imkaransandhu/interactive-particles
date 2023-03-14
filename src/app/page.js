@@ -18,9 +18,7 @@ export default function Home() {
     <Fragment>
       <div className="container"></div>
       <h1 className="interactive-wall">Interactive Wall</h1>
-      <video className="video"  autoPlay muted loop> 
-          <source src="video/your-video.mp4" type="video/mp4"/>
-         </video>
+    
       <Webcam
         id="webcam"
         style={{ visibility: "hidden", zIndex : "-1" ,  position: "absolute",  top : "0px" }}

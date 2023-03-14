@@ -22,7 +22,7 @@ export default class Particles {
       this.width = texture.image.width;
       this.height = texture.image.height;
 
-      this.initPoints(true);
+      this.initPoints(false);
       this.initHitArea();
       this.initTouch();
       this.resize();
