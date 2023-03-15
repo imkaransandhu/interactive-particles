@@ -9,11 +9,9 @@ import Webcam from "react-webcam";
 
 
 export default function Home() {
-  const videoCam = useRef(null); 
-  const canvasToLoad = useRef(null);
+  const videoCam = useRef(null); // ref for the webcam
+  const canvasToLoad = useRef(null); // ref for the canvas where he human abstract is displayed
  
-
-  //const [imageUrl, setImageUrl] = useState("/images/sample-10.avif");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,14 +32,16 @@ export default function Home() {
       segmenterConfig
     );
   
-      setInterval( async () => {
+      async function update () {
+
+        
         const segmentation = await segmenter.segmentPeople(img.video, {
           multiSegmentation: false,
           segmentBodyParts: true,
         });
         
         // Convert the segmentation into a mask to darken the background.
-        const foregroundColor = {r: 255, g: 200, b:100, a: 255}; //  color for where the person or body part is detected 
+        const foregroundColor = {r: 255, g: 200, b:100, a: 0}; //  color for where the person or body part is detected 
         const backgroundColor = {r: 0, g: 0, b: 0, a: 255}; // color or mask where the perosn or body part not detected 
         const backgroundDarkeningMask = await bodySegmentation.toBinaryMask(
           segmentation,
@@ -66,7 +66,10 @@ export default function Home() {
             );
             //setImageUrl(canvas.toDataURL());
             setLoading(false);
-          },100)
+            
+            requestAnimationFrame(update);
+          }
+            requestAnimationFrame(update);
       }
           
 
@@ -78,9 +81,7 @@ export default function Home() {
       
       <canvas 
         style={{ width: "100vw" , height : "100vh"}} 
-       
         ref={canvasToLoad}>
-
         </canvas>
         
       <Webcam
