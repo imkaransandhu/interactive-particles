@@ -10,13 +10,18 @@ export default class WebGLView {
   constructor(app) {
     this.app = app;
 
-    
-    this.samples = ["./images/Datacom.jpg", "./images/sample-12.png", "./images/sample-02.png", "./images/sample-01.jpg"];
-    this.initThree(); 
+    this.samples = [
+      // "./images/Datacom.jpg",
+      // "./images/sample-15.jpeg",
+      // "./images/sample-12 - Copy.png",
+      // "./images/sample-12.png",
+      "./images/sample-01.jpg",
+    ];
+    this.initThree();
     this.initParticles();
     this.initControls();
 
-    const rnd = ~~(Math.random() * this.samples.length);  
+    const rnd = ~~(Math.random() * this.samples.length);
     this.goto(rnd);
   }
 
@@ -31,10 +36,14 @@ export default class WebGLView {
       2,
       10000
     );
-    this.camera.position.z =  400;
+    this.camera.position.z = 500;
 
     // renderer
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      preserveDrawingBuffer: true,
+    });
 
     // clock
     this.clock = new THREE.Clock(true);

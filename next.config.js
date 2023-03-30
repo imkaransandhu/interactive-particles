@@ -1,8 +1,6 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
+const withTM = require("next-transpile-modules")(["gsap"]);
+
+module.exports = withTM({
   webpack: (config) => {
     // Add GSLX loader for *.vert and *.frag files
     config.module.rules.push({
@@ -12,6 +10,4 @@ const nextConfig = {
 
     return config;
   },
-};
-
-module.exports = nextConfig;
+});

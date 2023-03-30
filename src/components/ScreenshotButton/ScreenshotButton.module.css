@@ -1,0 +1,26 @@
+.buttonComponent {
+    display:  flex;
+    position: fixed;
+    right: 2rem;
+    bottom: 2rem;
+
+}
+
+.button {
+    display: flex;
+    width: 5rem;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    background-color:  #ffffff;
+    border: none;
+    color: #000000;
+    font-weight: bolder;
+    border-radius: .5rem;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color:  #3426b8;
+    color: #ffffff;
+}

@@ -4,16 +4,90 @@ import TouchTexture from "./TouchTexture";
 
 const glslify = require("glslify");
 
-export default class Particles {
+import * as bodySegmentation from "@tensorflow-models/body-segmentation";
+import * as tf from "@tensorflow/tfjs-core";
+// Register WebGL backend.
+import "@tensorflow/tfjs-backend-webgl";
+
+export default class PersonParticles {
   constructor(webgl) {
     this.webgl = webgl;
     this.container = new THREE.Object3D();
   }
 
   init(src) {
+    const img = document.getElementById("webcam");
+    const canvas = document.getElementById("canvasToLoad");
+    console.log(img);
+    removeBackground(img, canvas);
+    async function removeBackground(img, canvas) {
+      const model =
+        bodySegmentation.SupportedModels.MediaPipeSelfieSegmentation;
+      const segmenterConfig = {
+        runtime: "tfjs",
+      };
+      const segmenter = await bodySegmentation.createSegmenter(
+        model,
+        segmenterConfig
+      );
+      if (
+        navigator.mediaDevices &&
+        navigator.mediaDevices.getUserMedia &&
+        img.width !== 0 &&
+        img.height !== 0
+      ) {
+        console.log(img);
+        async function update() {
+          const segmentation = await segmenter.segmentPeople(img, {
+            multiSegmentation: true,
+            segmentBodyParts: true,
+          });
 
+          // Convert the segmentation into a mask to darken the background.
+          const foregroundColor = { r: 255, g: 0, b: 200, a: 255 }; //  color for where the person or body part is detected
+          const backgroundColor = { r: 0, g: 0, b: 0, a: 255 }; // color or mask where the perosn or body part not detected
+          const backgroundDarkeningMask = await bodySegmentation.toBinaryMask(
+            segmentation,
+            foregroundColor,
+            backgroundColor
+          );
 
-    const video = document.getElementById("webcam");
+          const opacity = 1;
+          const maskBlurAmount = 0;
+          const flipHorizontal = true;
+
+          // Draw the mask onto the image on a canvas.  With opacity set to 0.7 and
+          // maskBlurAmount set to 3, this will darken the background and blur the
+          // darkened background's edge.
+          await bodySegmentation.drawMask(
+            canvas,
+            img,
+            backgroundDarkeningMask,
+            opacity,
+            maskBlurAmount,
+            flipHorizontal
+          );
+          //setImageUrl(canvas.toDataURL());
+          //setLoading(false);
+
+          requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+      }
+    }
+
+    document.querySelector(".container").style.backgroundColor = "black";
+
+    // Create a media stream from the canvas
+    const stream = canvas.captureStream();
+    const video = document.getElementById("myVideo");
+    // Set the media stream as the source of the video element
+    video.srcObject = stream;
+
+    // Play the video
+    //video.play();
+
+    //const video = document.getElementById("webcam");
     video.height = 180;
     video.width = 320;
     video.muted = true;
@@ -30,10 +104,9 @@ export default class Particles {
 
       this.initPoints(false);
       this.initHitArea();
-      this.initTouch(); 
+      this.initTouch();
       this.resize();
       this.show();
-
       video.play();
     });
   }
@@ -48,8 +121,8 @@ export default class Particles {
     if (discard) {
       // discard pixels darker than threshold #22
       numVisible = 0;
-      threshold = 50;
-
+      threshold = 34;
+      console.log(this.texture);
       const img = this.texture.image;
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");

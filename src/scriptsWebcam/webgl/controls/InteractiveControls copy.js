@@ -44,40 +44,40 @@ export default class InteractiveControls extends EventEmitter {
     this.stream = null;
     this.videoConfig = null;
   
-    // this.createModal(); 
+    this.createModal(); 
 
     /////////////////////////////////////////////////////////////////////////
   }
 
   ///////////////////////////////////////////////////////////////////
-  // async createModal() {
-  //   const detectorConfig = {
-  //     modelType: poseDetection.movenet.modelType.SINGLEPOSE_THUNDER,
-  //     enableTracking: true,
-  //     trackerType: poseDetection.TrackerType.BoundingBox
-  //   };
-  //   const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
-  //   this.video = document.getElementById("webcam"); // accesing the webcam element
-  //   this.video.height = 480;
-  //   this.video.width = 640;
+  async createModal() {
+    const detectorConfig = {
+      modelType: poseDetection.movenet.modelType.SINGLEPOSE_THUNDER,
+      enableTracking: true,
+      trackerType: poseDetection.TrackerType.BoundingBox
+    };
+    const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, detectorConfig);
+    this.video = document.getElementById("webcam"); // accesing the webcam element
+    this.video.height = 480;
+    this.video.width = 640;
     
-  //   if (navigator.mediaDevices || navigator.mediaDevices.getUserMedia) { // Checking if the webcam is active 
-  //     setInterval(async () => {
-  //       const poses = await detector.estimatePoses(this.video);
-  //       if (poses && poses.length > 0) {
+    if (navigator.mediaDevices || navigator.mediaDevices.getUserMedia) { // Checking if the webcam is active 
+      setInterval(async () => {
+        const poses = await detector.estimatePoses(this.video);
+        if (poses && poses.length > 0) {
 
-  //         poses.forEach((personPose) => {
-  //           personPose.keypoints.forEach((keypoint) => {
+          poses.forEach((personPose) => {
+            personPose.keypoints.forEach((keypoint) => {
   
-  //             this.onPose(keypoint);  
-  //           });
-  //         })
-  //             }
-  //     },100)
-  //   } else {
-  //     console.log("wait for camera to load");
-  //   }
-  // }
+              this.onPose(keypoint);  
+            });
+          })
+              }
+      },100)
+    } else {
+      console.log("wait for camera to load");
+    }
+  }
 
   /////////////////////////////////////////////////////////////
 
