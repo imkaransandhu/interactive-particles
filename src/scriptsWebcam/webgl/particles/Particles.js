@@ -35,13 +35,13 @@ export default class PersonParticles {
         model,
         segmenterConfig
       );
-      if (
-        navigator.mediaDevices &&
-        navigator.mediaDevices.getUserMedia &&
-        img.width !== 0 &&
-        img.height !== 0
-      ) {
-        async function update() {
+
+      async function update() {
+        if (
+          typeof img !== "undefined" &&
+          img !== null &&
+          img.readyState === 4
+        ) {
           const segmentation = await segmenter.segmentPeople(img, {
             multiSegmentation: true,
             segmentBodyParts: true,
@@ -65,7 +65,7 @@ export default class PersonParticles {
           // darkened background's edge.
           await bodySegmentation.drawMask(
             canvas,
-            newVideoEl,
+            img,
             backgroundDarkeningMask,
             opacity,
             maskBlurAmount,
@@ -73,16 +73,18 @@ export default class PersonParticles {
           );
           //setImageUrl(canvas.toDataURL());
           //setLoading(false);
-
-          requestAnimationFrame(update);
+        } else {
+          console.error("Loading CAmera");
         }
         requestAnimationFrame(update);
       }
+      requestAnimationFrame(update);
     }
 
     document.querySelector(".container").style.backgroundColor = "black";
 
-    canvas.width = screen.width * 1.5;
+    canvas.width = 320;
+    canvas.height = 180;
 
     // Create a media stream from the canvas
     const stream = canvas.captureStream();
@@ -92,7 +94,6 @@ export default class PersonParticles {
     video.srcObject = stream;
 
     // Set the width of the video element to be equal to the width of the canvas
-    video.width = canvas.width;
     // Play the video
     //video.play();
 
@@ -108,8 +109,8 @@ export default class PersonParticles {
       this.texture.magFilter = THREE.LinearFilter;
       this.texture.format = THREE.RGBFormat;
 
-      this.width = video.videoWidth;
-      this.height = video.videoHeight;
+      this.width = 320;
+      this.height = 180;
 
       this.initPoints(false);
       this.initHitArea();

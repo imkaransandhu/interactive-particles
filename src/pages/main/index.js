@@ -3,7 +3,6 @@
 import App from "./../../scripts/App";
 import { Fragment, useEffect } from "react";
 import Webcam from "react-webcam";
-import ScreenshotButton from "@/components/ScreenshotButton/ScreenshotButton";
 
 export default function Home() {
   useEffect(() => {
@@ -28,8 +27,6 @@ export default function Home() {
           top: 0,
         }}
       />
-
-      <ScreenshotButton />
     </Fragment>
   );
 }

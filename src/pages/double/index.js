@@ -3,7 +3,6 @@
 import App from "./../../scriptsDouble/App";
 import { Fragment, useEffect } from "react";
 import Webcam from "react-webcam";
-import ScreenshotButton from "@/components/ScreenshotButton/ScreenshotButton";
 
 export default function Home() {
   useEffect(() => {
@@ -47,8 +46,6 @@ export default function Home() {
         height="480"
         controls
       ></video>
-
-      <ScreenshotButton />
     </Fragment>
   );
 }

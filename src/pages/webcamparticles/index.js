@@ -42,8 +42,8 @@ export default function Home() {
       <video
         style={{ display: "none" }}
         id="myVideo"
-        width="640"
-        height="480"
+        width={320}
+        height={180}
         controls
       ></video>
     </Fragment>

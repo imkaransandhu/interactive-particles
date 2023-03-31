@@ -35,13 +35,13 @@ export default class PersonParticles {
         model,
         segmenterConfig
       );
-      if (
-        navigator.mediaDevices &&
-        navigator.mediaDevices.getUserMedia &&
-        img.width !== 0 &&
-        img.height !== 0
-      ) {
-        async function update() {
+
+      async function update() {
+        if (
+          typeof img !== "undefined" &&
+          img !== null &&
+          img.readyState === 4
+        ) {
           const segmentation = await segmenter.segmentPeople(img, {
             multiSegmentation: true,
             segmentBodyParts: true,
@@ -73,11 +73,12 @@ export default class PersonParticles {
           );
           //setImageUrl(canvas.toDataURL());
           //setLoading(false);
-
-          requestAnimationFrame(update);
+        } else {
+          console.error("Loading Camera");
         }
         requestAnimationFrame(update);
       }
+      requestAnimationFrame(update);
     }
 
     document.querySelector(".container").style.backgroundColor = "black";

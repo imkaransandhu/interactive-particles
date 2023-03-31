@@ -22,7 +22,6 @@ export default class WebGLView {
     addImageButton.addEventListener("click", () => {
       // code to be executed when the element is clicked
       const video = document.getElementById("webcam");
-      console.log(video);
       const canvas = document.createElement("canvas");
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
@@ -46,13 +45,12 @@ export default class WebGLView {
           segmenterConfig
         );
 
-        if (
-          navigator.mediaDevices &&
-          navigator.mediaDevices.getUserMedia &&
-          img.width !== 0 &&
-          img.height !== 0
-        ) {
-          async function update() {
+        async function update() {
+          if (
+            typeof video !== "undefined" &&
+            video !== null &&
+            video.readyState === 4
+          ) {
             const segmentation = await segmenter.segmentPeople(img, {
               multiSegmentation: true,
               segmentBodyParts: true,
@@ -71,8 +69,6 @@ export default class WebGLView {
             const maskBlurAmount = 5;
             const flipHorizontal = true;
 
-            console.log(backgroundDarkeningMask);
-
             // Draw the mask onto the image on a canvas.  With opacity set to 0.7 and
             // maskBlurAmount set to 3, this will darken the background and blur the
             // darkened background's edge.
@@ -86,13 +82,13 @@ export default class WebGLView {
             );
             //setImageUrl(canvas.toDataURL());
             //setLoading(false);
+          } else {
+            update();
+            throw new Error("Camera is Not working");
           }
-          update();
-        } else {
-          throw new Error("Camera is Not working");
         }
+        update();
       }
-
       removeBackground(newImage, canvasToLoad);
       // const ctx = canvasToLoad.getContext("2d");
       // let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -157,24 +153,8 @@ export default class WebGLView {
         // Draw the resized image on the canvas
         context.drawImage(img, 0, 0, desiredWidth, desiredHeight);
 
-        // Create a link element
-        const link = document.createElement("a");
-
-        // Set the link's href attribute to the data URL of the resized image
-        link.href = canvas1.toDataURL();
-
-        // Set the link's download attribute to the desired file name
-        link.download = "my-resized-image.png";
-
-        // Add the link to the document
-        document.body.appendChild(link);
-
-        // Click the link to initiate the download
-        link.click();
-        document.body.removeChild(link);
         const clickEvent = new Event("click");
-
-        window.dispatchEvent(clickEvent);
+        document.body.dispatchEvent(clickEvent);
         this.samples.push(canvas1.toDataURL("image/png"));
       };
 

@@ -12,7 +12,6 @@ export default class Particles {
 
   init(src) {
     const loader = new THREE.TextureLoader();
-    console.log(src);
     loader.load(src, (texture) => {
       this.texture = texture;
       this.texture.minFilter = THREE.LinearFilter;
@@ -41,7 +40,6 @@ export default class Particles {
       // discard pixels darker than threshold #22
       numVisible = 0;
       threshold = 34;
-      console.log(this.texture);
       const img = this.texture.image;
       const canvas = document.createElement("canvas");
       canvas.classList.add("canvasDomEl");

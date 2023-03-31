@@ -15,7 +15,7 @@ function Nav() {
           <Link href="/">Home</Link>
         </li>
         <li>
-          <Link href="/capture">Capture</Link>
+          <Link href="/imageparticles">Image To particles</Link>
         </li>
         <li>
           <Link href="/main">Main</Link>
@@ -28,6 +28,9 @@ function Nav() {
         </li>
         <li>
           <Link href="/removebackground">Remove BG</Link>
+        </li>
+        <li>
+          <Link href="/double">Remove BG + particles</Link>
         </li>
       </ul>
     </nav>

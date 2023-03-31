@@ -30,7 +30,7 @@ export default class WebGLView {
       2,
       10000
     );
-    this.camera.position.z = 500;
+    this.camera.position.z = 400;
 
     // renderer
     this.renderer = new THREE.WebGLRenderer({
